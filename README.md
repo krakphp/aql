@@ -2,6 +2,10 @@
 
 API Query Language is a library designed to validate/transform string expressions to be used in API's for querying/filtering data. It allows user generated expressions to be used for querying data sets yet allows full verification to prevent any unwanted expression types.
 
+## Installation
+
+Install with composer at `krak/aql`.
+
 ## Usage
 
 An example might be the easiest way to understand what this library does.
