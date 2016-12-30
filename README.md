@@ -57,7 +57,10 @@ OR
     OpExpression  ::= Element "!=" OpExpression
     OpExpression  ::= Element "<=" OpExpression
     OpExpression  ::= Element ">=" OpExpression
-    Element       ::= string | number | IdExpression | "(" Expression ")"
+    OpExpression  ::= Element "in" "(" ValueList ")"
+    Element       ::= Value | IdExpression | "(" Expression ")"
+    Value         ::= string | number
+    ValueList     ::= Value | Value "," ValueList
     IdExpression  ::= identifier | identifier "." IdExpression
 
     string     = "[^"]\*"

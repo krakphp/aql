@@ -9,4 +9,6 @@ interface Visitor
     public function visitExpression(Expression $node);
     public function visitIdExpression(IdExpression $node);
     public function visitOpExpression(OpExpression $node);
+    public function visitValue(Value $node);
+    public function visitValueList(ValueList $node);
 }

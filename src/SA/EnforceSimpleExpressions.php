@@ -23,23 +23,26 @@ class EnforceSimpleExpressions implements Enforcer
             return;
         }
 
-        if (!$node->right) {
-            throw new SAException('Expressions must have two sides');
-        }
+        if ($node->right) {
+            if ($node->right->right) {
+                throw new SAException('Cannot chain operator expressions');
+            }
 
-        if ($node->right->right) {
-            throw new SAException('Cannot chain operator expressions');
-        }
+            $is_valid = ($node->left->id && $node->right->left->isValue()) ||
+                ($node->right->left->id && $node->left->isValue());
 
-        $is_valid = ($node->left->id && $node->right->left->isValue()) ||
-            ($node->right->left->id && $node->left->isValue());
-
-
-        $this->ignore = $node->right;
-        if ($is_valid) {
+            $this->ignore = $node->right;
+            if ($is_valid) {
+                return;
+            }
+        } else if ($node->value_list && $node->left->id) {
             return;
+        } else {
+            throw new SAException('Expressions must have two sides');
         }
 
         throw new SAException('Expression must be between an identifier and value');
     }
+    public function visitValue(AST\Value $node) {}
+    public function visitValueList(AST\ValueList $node) {}
 }

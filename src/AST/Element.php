@@ -4,23 +4,17 @@ namespace Krak\AQL\AST;
 
 class Element implements Node
 {
-    public $string;
-    public $number;
+    public $value;
     public $id;
     public $expr;
 
     public function isValue() {
-        return $this->string || $this->number;
+        return $this->value;
     }
 
-    public static function string($string) {
+    public static function value(Value $value) {
         $el = new self();
-        $el->string = $string;
-        return $el;
-    }
-    public static function number($number) {
-        $el = new self();
-        $el->number = $number;
+        $el->value = $value;
         return $el;
     }
     public static function id(IdExpression $id) {
@@ -35,12 +29,15 @@ class Element implements Node
     }
 
     public function accept(Visitor $visitor) {
+        $visitor->visitElement($this);
+
+        if ($this->value) {
+            $this->value->accept($visitor);
+        }
         if ($this->id) {
             $this->id->accept($visitor);
         } else if ($this->expr) {
             $this->expr->accept($visitor);
         }
-
-        return $visitor->visitElement($this);
     }
 }

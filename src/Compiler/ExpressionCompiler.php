@@ -29,24 +29,40 @@ class ExpressionCompiler implements Compiler
 
     private function compileOpExpression(AST\OpExpression $expr) {
         $s = $this->compileElement($expr->left);
-        if ($expr->operator) {
+        if ($expr->right) {
             return $s . ' ' . $expr->operator . ' ' . $this->compileOpExpression($expr->right);
+        } else if ($expr->value_list) {
+            return $s . ' ' . $expr->operator . ' (' . $this->compileValueList($expr->value_list) . ')';
         }
         return $s;
     }
 
     private function compileElement(AST\Element $el) {
-        if ($el->string) {
-            return $el->string->match;
-        }
-        if ($el->number) {
-            return $el->number->match;
+        if ($el->value) {
+            return $this->compileValue($el->value);
         }
         if ($el->id) {
             return $this->compileIdExpression($el->id);
         }
         if ($el->expr) {
             return '(' . $this->compileExpression($el->expr) . ')';
+        }
+    }
+
+    private function compileValueList(AST\ValueList $list) {
+        $s = $this->compileValue($list->value);
+        if ($list->right) {
+            return $s . ', ' . $this->compileValueList($list->right);
+        }
+        return $s;
+    }
+
+    private function compileValue(AST\Value $value) {
+        if ($value->string) {
+            return $value->string->match;
+        }
+        if ($value->number) {
+            return $value->number->match;
         }
     }
 

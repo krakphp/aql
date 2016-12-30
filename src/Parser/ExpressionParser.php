@@ -9,6 +9,7 @@ class ExpressionParser implements Parser
 {
     const TOK_OR = 'or';
     const TOK_AND = 'and';
+    const TOK_IN = 'in';
     const TOK_LT = '<';
     const TOK_LTE = '<=';
     const TOK_GT = '>';
@@ -21,6 +22,7 @@ class ExpressionParser implements Parser
     const TOK_RPAREN = ')';
     const TOK_ID = 'id';
     const TOK_DOT = '.';
+    const TOK_COMMA = ',';
     const TOK_WS = 'whitespace';
 
     private $lex;
@@ -68,6 +70,7 @@ class ExpressionParser implements Parser
         $left = $this->parseElement($stream);
         $op = null;
         $right = null;
+        $value_list = null;
 
         if ($stream->isEmpty()) {
             return new AQL\AST\OpExpression($left);
@@ -106,21 +109,47 @@ class ExpressionParser implements Parser
             $stream->getToken();
             $right = $this->parseOpExpression($stream);
             break;
+        case self::TOK_IN:
+            $op = AQL\AST\Operators::OP_IN;
+            $stream->getToken();
+            $this->expect($stream, self::TOK_LPAREN);
+            $value_list = $this->parseValueList($stream);
+            $this->expect($stream, self::TOK_RPAREN);
         }
 
-        return new AQL\AST\OpExpression($left, $op, $right);
+        return new AQL\AST\OpExpression($left, $op, $right, $value_list);
+    }
+
+    public function parseValueList($stream) {
+        $value = $this->parseValue($stream);
+        $right = null;
+
+        if ($stream->peek()->token == self::TOK_COMMA) {
+            $stream->getToken();
+            $right = $this->parseValueList($stream);
+        }
+
+        return new AQL\AST\ValueList($value, $right);
+    }
+
+    public function parseValue($stream) {
+        $tok = $stream->getToken();
+
+        if ($tok->token == self::TOK_STRING) {
+            return AQL\AST\Value::string($tok);
+        }
+        if ($tok->token == self::TOK_NUMBER) {
+            return AQL\AST\Value::number($tok);
+        }
+
+        throw new ParseException('Expected value');
     }
 
     public function parseElement($stream) {
         $tok = $stream->peek();
 
-        if ($tok->token == self::TOK_STRING) {
-            $stream->getToken();
-            return AQL\AST\Element::string($tok);
-        }
-        if ($tok->token == self::TOK_NUMBER) {
-            $stream->getToken();
-            return AQL\AST\Element::number($tok);
+        if ($tok->token == self::TOK_STRING || $tok->token == self::TOK_NUMBER) {
+            return AQL\AST\Element::value($this->parseValue($stream));
         }
         if ($tok->token == self::TOK_LPAREN) {
             $stream->getToken();
@@ -157,6 +186,7 @@ class ExpressionParser implements Parser
         $lex = Lex\lexer([
             '/or(?![a-z])/iA' => self::TOK_OR,
             '/and(?![a-z])/iA' => self::TOK_AND,
+            '/in(?![a-z])/iA' => self::TOK_IN,
             '/<=/A' => self::TOK_LTE,
             '/>=/A' => self::TOK_GTE,
             '/</A' => self::TOK_LT,
@@ -168,6 +198,7 @@ class ExpressionParser implements Parser
             '/"[^"]*"/A' => self::TOK_STRING,
             '/(\d*\.\d+|\d+)/A' => self::TOK_NUMBER,
             '/[_a-zA-Z][_a-zA-Z0-9]*/A' => self::TOK_ID,
+            '/,/A' => self::TOK_COMMA,
             '/\./A' => self::TOK_DOT,
             '/\s+/A' => self::TOK_WS
         ]);
