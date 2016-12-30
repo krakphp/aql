@@ -1,0 +1,24 @@
+{
+    "name": "krak/aql",
+    "description": "API Query Langauge",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "RJ Garcia",
+            "email": "rj@bighead.net"
+        }
+    ],
+    "require-dev": {
+        "peridot-php/peridot": "^1.18",
+        "symfony/var-dumper": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Krak\\AQL\\": "src"
+        }
+    },
+    "require": {
+        "krak/lex": "^0.2.0"
+    }
+}
