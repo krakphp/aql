@@ -2,4 +2,4 @@
 
 namespace Krak\AQL;
 
-class AQLException extends Exception {}
+class AQLException extends \Exception {}
