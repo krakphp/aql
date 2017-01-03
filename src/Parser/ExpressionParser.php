@@ -124,7 +124,8 @@ class ExpressionParser implements Parser
         $value = $this->parseValue($stream);
         $right = null;
 
-        if ($stream->peek()->token == self::TOK_COMMA) {
+        $tok = $stream->peek();
+        if ($tok && $tok->token == self::TOK_COMMA) {
             $stream->getToken();
             $right = $this->parseValueList($stream);
         }
@@ -133,20 +134,18 @@ class ExpressionParser implements Parser
     }
 
     public function parseValue($stream) {
-        $tok = $stream->getToken();
+        $tok = $this->expect($stream, [self::TOK_STRING, self::TOK_NUMBER]);
 
         if ($tok->token == self::TOK_STRING) {
             return AQL\AST\Value::string($tok);
         }
-        if ($tok->token == self::TOK_NUMBER) {
+        else if ($tok->token == self::TOK_NUMBER) {
             return AQL\AST\Value::number($tok);
         }
-
-        throw new ParseException('Expected value');
     }
 
     public function parseElement($stream) {
-        $tok = $stream->peek();
+        $tok = $this->expect($stream, [self::TOK_STRING, self::TOK_NUMBER, self::TOK_LPAREN, self::TOK_ID], true);
 
         if ($tok->token == self::TOK_STRING || $tok->token == self::TOK_NUMBER) {
             return AQL\AST\Element::value($this->parseValue($stream));
@@ -173,13 +172,45 @@ class ExpressionParser implements Parser
         return new AQL\AST\IdExpression($id, $right);
     }
 
-    private function expect($stream, $expected_tok) {
-        $tok = $stream->getToken();
-        if ($tok->token == $expected_tok) {
-            return $tok;
+    private function expect($stream, $expected_tok, $peek = false) {
+        if ($peek) {
+            $tok = $stream->peek();
+        } else {
+            $tok = $stream->getToken();
         }
 
-        throw new ParseException(sprintf("Expected token '%s' but got '%s'", $expected_tok, $tok->token));
+        if (!$tok) {
+            throw new ParseException(sprintf("Expected token %s but got EOF", $this->prepareExpectedTokenMessage($expected_tok)));
+        }
+        if (!is_array($expected_tok)) {
+            $expected_tok = [$expected_tok];
+        }
+
+        foreach ($expected_tok as $et) {
+            if ($tok->token == $et) {
+                return $tok;
+            }
+        }
+
+        throw new ParseException(sprintf("Expected token %s but got '%s'", $this->prepareExpectedTokenMessage($expected_tok), $tok->token));
+    }
+
+    private function prepareExpectedTokenMessage($expected_tok) {
+        if (count($expected_tok) > 1) {
+            $quoted_toks = array_map(function($v) {
+                return "'$v'";
+            }, $expected_tok);
+            $all_but_last = array_slice($quoted_toks, 0, -1);
+            $msg = implode(", ", $all_but_last);
+            if (count($expected_tok) > 2) {
+                $msg .= ',';
+            }
+            $msg .= sprintf(" or %s", end($quoted_toks));
+        } else {
+            $msg = "'$expected_tok'";
+        }
+
+        return $msg;
     }
 
     public static function createLexer() {

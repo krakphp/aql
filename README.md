@@ -41,7 +41,7 @@ From highest to lowest precedence
 
 ```
 ()
-< = > <= >=
+< = > <= >= IN
 AND
 OR
 ```
@@ -57,7 +57,7 @@ OR
     OpExpression  ::= Element "!=" OpExpression
     OpExpression  ::= Element "<=" OpExpression
     OpExpression  ::= Element ">=" OpExpression
-    OpExpression  ::= Element "in" "(" ValueList ")"
+    OpExpression  ::= Element "IN" "(" ValueList ")"
     Element       ::= Value | IdExpression | "(" Expression ")"
     Value         ::= string | number
     ValueList     ::= Value | Value "," ValueList
