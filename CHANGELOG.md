@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.1.2] - 2017-01-10
 ### Added
 
 - `DoubleToSingleQuotesVisitor` and appropriate tests
