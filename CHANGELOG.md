@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DoubleToSingleQuotesVisitor` and appropriate tests
 - Documentation on visitors.
 
+### Fixed
+
+- Bug in RenameId visitor where it would rename any match instead of top level identifiers
+
 ## [0.1.1] - 2017-01-03
 ### Fixed
 

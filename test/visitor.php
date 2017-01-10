@@ -15,3 +15,14 @@ describe('DoubleToSingleQuotesVisitor', function() {
         assert($s == "'s'");
     });
 });
+describe('RenameIdVisitor', function() {
+    it('renames top level domain ids', function() {
+        $ast = $this->parser->parse('a = b.a');
+        $ast->accept(new AQL\Visitor\RenameIdVisitor([
+            'a' => 'alpha',
+            'b' => 'beta'
+        ]));
+        $s = $this->compiler->compile($ast);
+        assert($s == "alpha = beta.a");
+    });
+});

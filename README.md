@@ -59,6 +59,29 @@ would be be mapped to:
 'string'
 ```
 
+### RenameId Visitor
+
+This visitor `Krak\AQL\Visitor\RenameIdVisitor` renames top level identifiers.
+
+```php
+$ast->accept(new AQL\Visitor\RenameIdVisitor([
+    'a' => 'alpha',
+    'b' => 'beta'
+]));
+```
+
+Using this rename visitor, it'd apply the following transformation:
+
+```
+a = b.a
+```
+
+Goes to:
+
+```
+alpha = beta.a
+```
+
 ## Parser
 
 ### Operators

@@ -22,6 +22,8 @@ class RenameIdVisitor implements AST\Visitor
             return;
         }
 
+        $this->ignore = $node->right;
+
         if (isset($this->rename_map[$node->id->match])) {
             $node->id->match = $this->rename_map[$node->id->match];
         }
