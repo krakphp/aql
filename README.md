@@ -35,7 +35,33 @@ The `AQL\Engine::process` does several things.
 
 The final processed_query is now validated and can be used as part of an SQL where clause or something similar.
 
-## Operators
+## Visitors
+
+Visitors provide a way to transform the AST. In context of the engine, visitors are run *after* semantic analysis. Each visitor implements `Krak\AQL\AST\Visitor`. The AST accepts the visitor and then traverses itself with a [Depth First Pre-Order Traversal](https://en.wikipedia.org/wiki/Tree_traversal#Depth-first_search).
+
+### Chain Visitor
+
+The chain visitor `Krak\AQL\AST\ChainVisitor` accepts an array of other visitors. As it the AST is being traversed, it delegates to each of the other visitors. This allows for many transformations in one Pass.
+
+### DoubleToSingleQuotes Visitor
+
+This visitor `Krak\AQL\Visitor\DoubleToSingleQuotesVisitor` transforms double quoted strings to single quotes.
+
+So this input:
+
+```
+"string"
+```
+
+would be be mapped to:
+
+```
+'string'
+```
+
+## Parser
+
+### Operators
 
 From highest to lowest precedence
 
@@ -46,7 +72,7 @@ AND
 OR
 ```
 
-## EBNF (Grammar)
+### EBNF (Grammar)
 
     Expression    ::= AndExpression | AndExpression "OR" Expression
     AndExpression ::= OpExpression | OpExression "AND" AndExpression
