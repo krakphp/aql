@@ -5,7 +5,7 @@ use Krak\AQL\Parser;
 describe('ExpressionParser', function() {
     describe('::createLexer', function() {
         it('creates a lexer for parsing AQL', function() {
-            $input = '0a b._c<><=>==(!=) andy more and or 0. .0 0.0 ""';
+            $input = '0a b._c<><=>==(!=) andy more and or 0. .0 0.0 ""like likely';
             $lex = Parser\ExpressionParser::createLexer();
             $stream = $lex($input);
 
@@ -32,6 +32,8 @@ describe('ExpressionParser', function() {
                 Parser\ExpressionParser::TOK_NUMBER,
                 Parser\ExpressionParser::TOK_NUMBER,
                 Parser\ExpressionParser::TOK_STRING,
+                Parser\ExpressionParser::TOK_LIKE,
+                Parser\ExpressionParser::TOK_ID,
             ];
 
             $tok = $tok_sequence[0];

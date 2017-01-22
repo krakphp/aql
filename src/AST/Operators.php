@@ -13,4 +13,5 @@ final class Operators
     const OP_AND = 'AND';
     const OP_OR = 'OR';
     const OP_IN = 'IN';
+    const OP_LIKE = 'LIKE';
 }
