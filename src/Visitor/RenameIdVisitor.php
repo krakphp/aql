@@ -31,4 +31,6 @@ class RenameIdVisitor implements AST\Visitor
     public function visitOpExpression(AST\OpExpression $node) {}
     public function visitValue(AST\Value $node) {}
     public function visitValueList(AST\ValueList $node) {}
+    public function visitElementList(AST\ElementList $node) {}
+    public function visitFunc(AST\Func $node) {}
 }

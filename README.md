@@ -18,7 +18,7 @@ use Krak\AQL;
 $engine = AQL\Engine::createWithDomain([
     'orders' => ['status', 'created_at']
 ]);
-$query = 'orders.created_at < "2016-12-25" and orders.status = "cancelled"';
+$query = 'orders.created_at < date(now()) and orders.status = "cancelled"';
 try {
     $processed_query = $engine->process($query);
 } catch (AQL\AQLException $e) {
@@ -82,6 +82,51 @@ Goes to:
 alpha = beta.a
 ```
 
+## Semantic Analysis
+
+Semantic Analysis provides extra validation of the parsed AST to make sure the parsed expression is semantically correct.
+
+SA Enforcers are simply just visitors that will throw an `SAException` if the AST failed semantic analysis. SA is done via a single pass because it makes use of the `AST\ChainVisitor`.
+
+To utilize SA, you create your list of enforces and construct the `SemanticAnalysis` object.
+
+```php
+<?php
+
+$sa = new SA\SemanticAnalysis([$enforce]);
+$sa->analyze($ast);
+```
+
+### EnforceDomain
+
+Enforces identifiers are within a certain domain.
+
+```php
+<?php
+
+$enforce = new SA\EnforceDomain([
+    'user' => [
+        'id',
+        'email',
+        'group' => ['id', 'name']
+    ]
+]);
+```
+
+This would allow any identifier path like `user.id`, `user.email`, `user.group.id` and a few others.
+
+### EnforceFunc
+
+Enforces only certain functions to be used.
+
+```php
+<?php
+
+$enforce = new SA\EnforceFunc(['now', 'date']);
+```
+
+This would allow only the `now` and `date` functions to be used, anything else would throw an exception.
+
 ## Parser
 
 ### Operators
@@ -108,11 +153,21 @@ OR
     OpExpression  ::= Element ">=" OpExpression
     OpExpression  ::= Element "LIKE" OpExpression
     OpExpression  ::= Element "IN" "(" ValueList ")"
-    Element       ::= Value | IdExpression | "(" Expression ")"
+    Element       ::= Value | IdExpression | Func | "(" Expression ")"
     Value         ::= string | number
     ValueList     ::= Value | Value "," ValueList
     IdExpression  ::= identifier | identifier "." IdExpression
+    Func          ::= identifier "(" ElementList ")"
+    ElementList   ::= Element | Element "," ElementList
 
     string     = "[^"]\*"
     number     = (\d*\.\d+|\d+)
     identifier = [_a-zA-Z][_a-zA-Z0-9]*
+
+## Tests
+
+Tests are executed via [Peridot](http://peridot-php.github.io)
+
+```
+make test
+```

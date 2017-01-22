@@ -20,6 +20,11 @@ class ChainVisitor implements Visitor
             $visitor->visitElement($node);
         }
     }
+    public function visitElementList(ElementList $node) {
+        foreach ($this->visitors as $visitor) {
+            $visitor->visitElementList($node);
+        }
+    }
     public function visitExpression(Expression $node) {
         foreach ($this->visitors as $visitor) {
             $visitor->visitExpression($node);
@@ -43,6 +48,11 @@ class ChainVisitor implements Visitor
     public function visitValueList(ValueList $node) {
         foreach ($this->visitors as $visitor) {
             $visitor->visitValueList($node);
+        }
+    }
+    public function visitFunc(Func $node) {
+        foreach ($this->visitors as $visitor) {
+            $visitor->visitFunc($node);
         }
     }
 }

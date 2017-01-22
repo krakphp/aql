@@ -19,4 +19,6 @@ class DoubleToSingleQuotesVisitor implements AST\Visitor
         }
     }
     public function visitValueList(AST\ValueList $node) {}
+    public function visitElementList(AST\ElementList $node) {}
+    public function visitFunc(AST\Func $node) {}
 }
