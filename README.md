@@ -90,7 +90,7 @@ From highest to lowest precedence
 
 ```
 ()
-< = > <= >= IN
+< = > <= >= IN LIKE
 AND
 OR
 ```
@@ -106,6 +106,7 @@ OR
     OpExpression  ::= Element "!=" OpExpression
     OpExpression  ::= Element "<=" OpExpression
     OpExpression  ::= Element ">=" OpExpression
+    OpExpression  ::= Element "LIKE" OpExpression
     OpExpression  ::= Element "IN" "(" ValueList ")"
     Element       ::= Value | IdExpression | "(" Expression ")"
     Value         ::= string | number

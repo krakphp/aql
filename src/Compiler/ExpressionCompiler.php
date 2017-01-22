@@ -30,9 +30,9 @@ class ExpressionCompiler implements Compiler
     private function compileOpExpression(AST\OpExpression $expr) {
         $s = $this->compileElement($expr->left);
         if ($expr->right) {
-            return $s . ' ' . $expr->operator . ' ' . $this->compileOpExpression($expr->right);
+            return $s . ' ' . strtoupper($expr->operator) . ' ' . $this->compileOpExpression($expr->right);
         } else if ($expr->value_list) {
-            return $s . ' ' . $expr->operator . ' (' . $this->compileValueList($expr->value_list) . ')';
+            return $s . ' ' . strtoupper($expr->operator) . ' (' . $this->compileValueList($expr->value_list) . ')';
         }
         return $s;
     }

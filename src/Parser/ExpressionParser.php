@@ -10,6 +10,7 @@ class ExpressionParser implements Parser
     const TOK_OR = 'or';
     const TOK_AND = 'and';
     const TOK_IN = 'in';
+    const TOK_LIKE = 'like';
     const TOK_LT = '<';
     const TOK_LTE = '<=';
     const TOK_GT = '>';
@@ -106,6 +107,11 @@ class ExpressionParser implements Parser
             break;
         case self::TOK_NEQ:
             $op = AQL\AST\Operators::OP_NEQ;
+            $stream->getToken();
+            $right = $this->parseOpExpression($stream);
+            break;
+        case self::TOK_LIKE:
+            $op = AQL\AST\Operators::OP_LIKE;
             $stream->getToken();
             $right = $this->parseOpExpression($stream);
             break;
@@ -218,6 +224,7 @@ class ExpressionParser implements Parser
             '/or(?![a-z])/iA' => self::TOK_OR,
             '/and(?![a-z])/iA' => self::TOK_AND,
             '/in(?![a-z])/iA' => self::TOK_IN,
+            '/like(?![a-z])/iA' => self::TOK_LIKE,
             '/<=/A' => self::TOK_LTE,
             '/>=/A' => self::TOK_GTE,
             '/</A' => self::TOK_LT,
