@@ -38,15 +38,27 @@ class ExpressionCompiler implements Compiler
     }
 
     private function compileElement(AST\Element $el) {
-        if ($el->value) {
+        if ($el->isValue()) {
             return $this->compileValue($el->value);
         }
-        if ($el->id) {
+        if ($el->isId()) {
             return $this->compileIdExpression($el->id);
         }
-        if ($el->expr) {
+        if ($el->isFunc()) {
+            return $this->compileFunc($el->func);
+        }
+        if ($el->isExpr()) {
             return '(' . $this->compileExpression($el->expr) . ')';
         }
+
+    }
+
+    private function compileElementList(AST\ElementList $list) {
+        $s = $this->compileElement($list->element);
+        if ($list->right) {
+            return $s . ', ' . $this->compileElementList($list->right);
+        }
+        return $s;
     }
 
     private function compileValueList(AST\ValueList $list) {
@@ -72,5 +84,10 @@ class ExpressionCompiler implements Compiler
             return $s . '.' . $this->compileIdExpression($expr->right);
         }
         return $s;
+    }
+
+    private function compileFunc(AST\Func $func) {
+        $s = $func->params ? $this->compileElementList($func->params) : '';
+        return $func->name->match . '(' . $s . ')';
     }
 }

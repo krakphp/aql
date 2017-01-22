@@ -66,4 +66,10 @@ class EnforceDomain implements Enforcer
     public function visitValueList(AST\ValueList $node) {
         $this->last_node = $node;
     }
+    public function visitElementList(AST\ElementList $node) {
+        $this->last_node = $node;
+    }
+    public function visitFunc(AST\Func $node) {
+        $this->last_node = $node;
+    }
 }

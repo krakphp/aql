@@ -13,6 +13,10 @@ class ValueList implements Node
     }
 
     public function accept(Visitor $visitor) {
-        return $visitor->visitValueList($this);
+        $visitor->visitValueList($this);
+        $this->value->accept($visitor);
+        if ($this->right) {
+            $this->right->accept($visitor);
+        }
     }
 }

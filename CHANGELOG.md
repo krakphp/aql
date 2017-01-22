@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added LIKE expression
+- Added ability to parse functions and enforce them via `EnforceFunc`
+- Added better documentation
 
 ## [0.1.2] - 2017-01-10
 ### Added

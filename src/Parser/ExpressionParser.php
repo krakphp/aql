@@ -35,9 +35,15 @@ class ExpressionParser implements Parser
     public function parse($input) {
         $lex = $this->lex;
         $stream = $lex($input);
+        $stream = new ArrayCacheTokenStream($stream);
 
         try {
-            return $this->parseExpression($stream);
+            $expr = $this->parseExpression($stream);
+            if ($stream->isEmpty()) {
+                return $expr;
+            }
+
+            throw new ParseException('Expression finished parsing, but there is still input.');
         } catch (Lex\LexException $e) {
             throw new ParseException($e->getMessage());
         }
@@ -50,6 +56,8 @@ class ExpressionParser implements Parser
         if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_OR) {
             $stream->getToken();
             $right = $this->parseExpression($stream);
+        } else if (!$stream->isEmpty()) {
+            $stream->putBack();
         }
 
         return new AQL\AST\Expression($left, $right);
@@ -62,6 +70,8 @@ class ExpressionParser implements Parser
         if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_AND) {
             $stream->getToken();
             $right = $this->parseAndExpression($stream);
+        } else if (!$stream->isEmpty()) {
+            $stream->putBack();
         }
 
         return new AQL\AST\AndExpression($left, $right);
@@ -121,6 +131,8 @@ class ExpressionParser implements Parser
             $this->expect($stream, self::TOK_LPAREN);
             $value_list = $this->parseValueList($stream);
             $this->expect($stream, self::TOK_RPAREN);
+        default:
+            $stream->putBack();
         }
 
         return new AQL\AST\OpExpression($left, $op, $right, $value_list);
@@ -134,6 +146,8 @@ class ExpressionParser implements Parser
         if ($tok && $tok->token == self::TOK_COMMA) {
             $stream->getToken();
             $right = $this->parseValueList($stream);
+        } else if ($tok) {
+            $stream->putBack();
         }
 
         return new AQL\AST\ValueList($value, $right);
@@ -162,8 +176,30 @@ class ExpressionParser implements Parser
             $this->expect($stream, self::TOK_RPAREN);
             return AQL\AST\Element::expr($expr);
         }
+        if ($tok->token == self::TOK_ID) {
+            if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_LPAREN) {
+                $stream->putBack();
+                return AQL\AST\Element::func($this->parseFunc($stream));
+            } else if (!$stream->isEmpty()) {
+                $stream->putBack();
+            }
 
-        return AQL\AST\Element::id($this->parseIdExpression($stream));
+            return AQL\AST\Element::id($this->parseIdExpression($stream));
+        }
+    }
+
+    public function parseElementList($stream) {
+        $element = $this->parseElement($stream);
+        $right = null;
+
+        if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_COMMA) {
+            $stream->getToken();
+            $right = $this->parseElementList($stream);
+        } else if (!$stream->isEmpty()) {
+            $stream->putBack();
+        }
+
+        return new AQL\AST\ElementList($element, $right);
     }
 
     public function parseIdExpression($stream) {
@@ -173,9 +209,27 @@ class ExpressionParser implements Parser
         if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_DOT) {
             $stream->getToken();
             $right = $this->parseIdExpression($stream);
+        } else if (!$stream->isEmpty()) {
+            $stream->putBack();
         }
 
         return new AQL\AST\IdExpression($id, $right);
+    }
+
+    public function parseFunc($stream) {
+        $id = $this->expect($stream, self::TOK_ID);
+
+        $this->expect($stream, self::TOK_LPAREN);
+        if (!$stream->isEmpty() && $stream->peek()->token == self::TOK_RPAREN) {
+            $stream->getToken();
+            return new AQL\AST\Func($id);
+        } else if (!$stream->isEmpty()) {
+            $stream->putBack();
+        }
+
+        $params = $this->parseElementList($stream);
+        $this->expect($stream, self::TOK_RPAREN);
+        return new AQL\AST\Func($id, $params);
     }
 
     private function expect($stream, $expected_tok, $peek = false) {

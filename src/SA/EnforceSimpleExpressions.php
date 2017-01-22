@@ -28,8 +28,7 @@ class EnforceSimpleExpressions implements Enforcer
                 throw new SAException('Cannot chain operator expressions');
             }
 
-            $is_valid = ($node->left->id && $node->right->left->isValue()) ||
-                ($node->right->left->id && $node->left->isValue());
+            $is_valid = $this->nodeIsAllowed($node);
 
             $this->ignore = $node->right;
             if ($is_valid) {
@@ -45,4 +44,14 @@ class EnforceSimpleExpressions implements Enforcer
     }
     public function visitValue(AST\Value $node) {}
     public function visitValueList(AST\ValueList $node) {}
+    public function visitElementList(AST\ElementList $node) {}
+    public function visitFunc(AST\Func $node) {}
+
+    private function nodeIsAllowed($node) {
+        return (
+            $node->left->isId() && ($node->right->left->isValue() || $node->right->left->isFunc())
+        ) || (
+            $node->right->left->isId() && ($node->left->isValue() || $node->left->isFunc())
+        );
+    }
 }
