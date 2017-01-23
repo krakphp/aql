@@ -82,6 +82,24 @@ Goes to:
 alpha = beta.a
 ```
 
+### FuncEval Visitor
+
+The FuncEval lets your evaluate a function and transform it into another Element value.
+
+It can turn an input:
+
+```
+1 = id(1)
+```
+
+to:
+
+```
+1 = 1
+```
+
+Checkout [example/func-eval.php](example/func-eval.php) to see a working example.
+
 ## Semantic Analysis
 
 Semantic Analysis provides extra validation of the parsed AST to make sure the parsed expression is semantically correct.

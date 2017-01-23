@@ -19,4 +19,14 @@ class ElementList implements Node
             $this->right->accept($visitor);
         }
     }
+
+    public function toArray() {
+        $els = [$this->element];
+        $el = $this->right;
+        while ($el) {
+            $els[] = $el->element;
+            $el = $el->right;
+        }
+        return $els;
+    }
 }

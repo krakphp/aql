@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+
+- Added FuncEval
+- Added ASTFactory to help create simple AST nodes manually
 
 ## [0.2.0] - 2017-01-22
 ### Added

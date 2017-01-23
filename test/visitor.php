@@ -21,3 +21,20 @@ describe('RenameIdVisitor', function() {
         assert($s == "alpha = beta.a");
     });
 });
+describe('FuncEvalVisitor', function() {
+    it('evaluates and transforms funcs', function() {
+        $ast = $this->parser->parse('3 = add(1,2)');
+        $ast->accept(new AQL\Visitor\FuncEvalVisitor([
+            'add' => new AQL\FuncEval\ClosureFuncEval(function($func, $factory) {
+                $params = $func->params->toArray();
+                $params = array_map(function($el) {
+                    return (int) $el->value->number->match;
+                }, $params);
+                $sum = array_sum($params);
+                return $factory->createNumberValue($sum);
+            })
+        ]));
+        $s = $this->compiler->compile($ast);
+        assert($s == "3 = 3");
+    });
+});
