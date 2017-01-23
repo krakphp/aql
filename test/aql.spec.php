@@ -5,6 +5,9 @@ describe('Krak AQL', function() {
         $this->parser = new Krak\AQL\Parser\ExpressionParser();
         $this->compiler = new Krak\AQL\Compiler\ExpressionCompiler();
     });
+    describe('AST', function() {
+        require_once __DIR__ . '/ast.php';
+    });
     describe('Parser', function() {
         require __DIR__ . '/parser.php';
     });
