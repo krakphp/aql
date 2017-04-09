@@ -2,7 +2,7 @@
 
 namespace Krak\AQL\Parser;
 
-class ExpressionParser implements Parser
+class SortParser implements Parser
 {
     private $parser;
 
@@ -12,7 +12,7 @@ class ExpressionParser implements Parser
 
     public function parse($input) {
         return $this->parser->parse($input, function($parser, $stream) {
-            return $parser->parseExpression($stream);
+            return $parser->parseSortExpressionList($stream);
         });
     }
 }

@@ -4,7 +4,7 @@ namespace Krak\AQL\Visitor;
 
 use Krak\AQL\AST;
 
-class FuncEvalVisitor implements AST\Visitor
+class FuncEvalVisitor extends AST\AbstractVisitor
 {
     private $eval_map;
     private $factory;
@@ -14,7 +14,6 @@ class FuncEvalVisitor implements AST\Visitor
         $this->factory = $factory ?: new AST\ASTFactory();
     }
 
-    public function visitAndExpression(AST\AndExpression $node) {}
     public function visitElement(AST\Element $node) {
         if (!$node->func) {
             return;
@@ -38,11 +37,4 @@ class FuncEvalVisitor implements AST\Visitor
             $node->expr = $val;
         }
     }
-    public function visitExpression(AST\Expression $node) {}
-    public function visitIdExpression(AST\IdExpression $node) {}
-    public function visitOpExpression(AST\OpExpression $node) {}
-    public function visitValue(AST\Value $node) {}
-    public function visitValueList(AST\ValueList $node) {}
-    public function visitElementList(AST\ElementList $node) {}
-    public function visitFunc(AST\Func $node) {}
 }

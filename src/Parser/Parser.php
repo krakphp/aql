@@ -4,6 +4,6 @@ namespace Krak\AQL\Parser;
 
 interface Parser
 {
-    /** @return AST\Expression */
+    /** @return AST\Node */
     public function parse($input);
 }

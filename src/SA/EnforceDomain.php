@@ -5,10 +5,10 @@ namespace Krak\AQL\SA;
 use Krak\AQL\AST;
 
 /** checks that each identifier  */
-class EnforceDomain implements Enforcer
+class EnforceDomain extends AbstractEnforcer
 {
     private $domain_tree;
-    private $last_node;
+    private $next_id;
     private $cur_tree;
 
     /** example domain tree
@@ -27,20 +27,11 @@ class EnforceDomain implements Enforcer
         $this->domain_tree = $domain_tree;
     }
 
-    public function visitAndExpression(AST\AndExpression $node) {
-        $this->last_node = $node;
-    }
-    public function visitElement(AST\Element $node) {
-        $this->last_node = $node;
-    }
-    public function visitExpression(AST\Expression $node) {
-        $this->last_node = $node;
-    }
     public function visitIdExpression(AST\IdExpression $node) {
-        if (!$this->last_node instanceof AST\IdExpression) {
+        if ($this->next_id != $node) {
             $this->cur_tree = $this->domain_tree;
         }
-        $this->last_node = $node;
+        $this->next_id = $node->right;
 
         $valid = is_array($this->cur_tree) &&
             (
@@ -56,20 +47,5 @@ class EnforceDomain implements Enforcer
         if (isset($this->cur_tree[$node->id->match])) {
             $this->cur_tree = $this->cur_tree[$node->id->match];
         }
-    }
-    public function visitOpExpression(AST\OpExpression $node) {
-        $this->last_node = $node;
-    }
-    public function visitValue(AST\Value $node) {
-        $this->last_node = $node;
-    }
-    public function visitValueList(AST\ValueList $node) {
-        $this->last_node = $node;
-    }
-    public function visitElementList(AST\ElementList $node) {
-        $this->last_node = $node;
-    }
-    public function visitFunc(AST\Func $node) {
-        $this->last_node = $node;
     }
 }

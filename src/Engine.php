@@ -35,4 +35,22 @@ class Engine
         ]);
         return new self(null, $sa, null, $visitor);
     }
+
+    public static function createSort(AST\Visitor $visitor = null) {
+        return new self(
+            new Parser\SortParser(),
+            new SA\SemanticAnalysis([]),
+            new Compiler\SortCompiler(),
+            $visitor
+        );
+    }
+
+    public static function createSortWithDomain($domain, AST\Visitor $visitor = null) {
+        return new self(
+            new Parser\SortParser(),
+            new SA\SemanticAnalysis([new SA\EnforceDomain($domain)]),
+            new Compiler\SortCompiler(),
+            $visitor
+        );
+    }
 }

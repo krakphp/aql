@@ -13,7 +13,7 @@ class SemanticAnalysis
     }
 
     /** @throws SAException */
-    public function analyze(AST\Expression $expr) {
+    public function analyze(AST\Node $expr) {
         $expr->accept($this->visitor);
     }
 }

@@ -4,7 +4,7 @@ namespace Krak\AQL\Visitor;
 
 use Krak\AQL\AST;
 
-class RenameIdVisitor implements AST\Visitor
+class RenameIdVisitor extends AST\AbstractVisitor
 {
     private $rename_map;
     private $previous_ids;
@@ -15,9 +15,6 @@ class RenameIdVisitor implements AST\Visitor
         $this->previous_ids = [];
     }
 
-    public function visitAndExpression(AST\AndExpression $node) {}
-    public function visitElement(AST\Element $node) {}
-    public function visitExpression(AST\Expression $node) {}
     public function visitIdExpression(AST\IdExpression $node) {
         if ($this->next_id !== $node) {
             $this->previous_ids = [];
@@ -37,9 +34,4 @@ class RenameIdVisitor implements AST\Visitor
             $node->id->match = $this->rename_map[$key];
         }
     }
-    public function visitOpExpression(AST\OpExpression $node) {}
-    public function visitValue(AST\Value $node) {}
-    public function visitValueList(AST\ValueList $node) {}
-    public function visitElementList(AST\ElementList $node) {}
-    public function visitFunc(AST\Func $node) {}
 }
