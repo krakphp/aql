@@ -15,10 +15,11 @@ describe('RenameIdVisitor', function() {
         $ast = $this->parser->parse('a = b.a');
         $ast->accept(new AQL\Visitor\RenameIdVisitor([
             'a' => 'alpha',
-            'b' => 'beta'
+            'b' => 'beta',
+            'b.a' => 'attribute'
         ]));
         $s = $this->compiler->compile($ast);
-        assert($s == "alpha = beta.a");
+        assert($s == "alpha = beta.attribute");
     });
 });
 describe('FuncEvalVisitor', function() {

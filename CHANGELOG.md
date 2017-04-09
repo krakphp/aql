@@ -4,20 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## Unreleased
+
 ### Added
 
-- Added FuncEval
-- Added ASTFactory to help create simple AST nodes manually
+- FuncEval #7
+- ASTFactory to help create simple AST nodes manually
+- Nested rename in RenameIdVisitor #1
 
-## [0.2.0] - 2017-01-22
+## 0.2.0 - 2017-01-22
+
 ### Added
 
 - Added LIKE expression
 - Added ability to parse functions and enforce them via `EnforceFunc`
 - Added better documentation
 
-## [0.1.2] - 2017-01-10
+## 0.1.2 - 2017-01-10
+
 ### Added
 
 - `DoubleToSingleQuotesVisitor` and appropriate tests
@@ -27,7 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Bug in RenameId visitor where it would rename any match instead of top level identifiers
 
-## [0.1.1] - 2017-01-03
+## 0.1.1 - 2017-01-03
+
 ### Fixed
 
 - Several parser bugs regarding unexpected input
@@ -37,7 +42,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Parser exception messaging to be more precise
 
-## [0.1.0] - 2016-12-30
+## 0.1.0 - 2016-12-30
+
 ### Added
 
 - Initial Implementation
