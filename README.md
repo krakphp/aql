@@ -39,7 +39,7 @@ The final `$processed_query` is now validated and can be used as part of an SQL 
 
 In addition to expression queries that can be used in database `WHERE` clause. The library also supports parsing sort expressions which might show up in a database `ORDER BY` clause.
 
-```
+```php
 <?php
 
 use Krak\AQL;
