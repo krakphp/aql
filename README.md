@@ -61,12 +61,13 @@ would be be mapped to:
 
 ### RenameId Visitor
 
-This visitor `Krak\AQL\Visitor\RenameIdVisitor` renames top level identifiers.
+This visitor `Krak\AQL\Visitor\RenameIdVisitor` renames identifiers. You can use dot notation to access sub identifiers.
 
 ```php
 $ast->accept(new AQL\Visitor\RenameIdVisitor([
     'a' => 'alpha',
-    'b' => 'beta'
+    'b' => 'beta',
+    'b.a' => 'attribute',
 ]));
 ```
 
@@ -79,7 +80,7 @@ a = b.a
 Goes to:
 
 ```
-alpha = beta.a
+alpha = beta.attribute
 ```
 
 ### FuncEval Visitor
