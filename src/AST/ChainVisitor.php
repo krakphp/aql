@@ -55,4 +55,14 @@ class ChainVisitor implements Visitor
             $visitor->visitFunc($node);
         }
     }
+    public function visitSortExpressionList(SortExpressionList $node) {
+        foreach ($this->visitors as $visitor) {
+            $visitor->visitSortExpressionList($node);
+        }
+    }
+    public function visitSortExpression(SortExpression $node) {
+        foreach ($this->visitors as $visitor) {
+            $visitor->visitSortExpression($node);
+        }
+    }
 }

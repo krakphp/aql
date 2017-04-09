@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- Sort Processing #10
+
 ## 0.2.1 - 2017-04-08
 
 ### Added

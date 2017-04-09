@@ -7,7 +7,9 @@ use Krak\AQL\AST;
 /** Compiles an expression back into a string */
 class ExpressionCompiler implements Compiler
 {
-    public function compile(AST\Expression $expr) {
+    use CompileIdExpression;
+
+    public function compile(AST\Node $expr) {
         return $this->compileExpression($expr);
     }
 
@@ -76,14 +78,6 @@ class ExpressionCompiler implements Compiler
         if ($value->number) {
             return $value->number->match;
         }
-    }
-
-    private function compileIdExpression(AST\IdExpression $expr) {
-        $s = $expr->id->match;
-        if ($expr->right) {
-            return $s . '.' . $this->compileIdExpression($expr->right);
-        }
-        return $s;
     }
 
     private function compileFunc(AST\Func $func) {

@@ -33,7 +33,28 @@ The `AQL\Engine::process` does several things.
 3. It runs any custom transformations
 4. It then compiles the AST back into a string to be used for generating queries.
 
-The final processed_query is now validated and can be used as part of an SQL where clause or something similar.
+The final `$processed_query` is now validated and can be used as part of an SQL where clause or something similar. Thus, it provides a way for API's to support a powerful query interface while providing total control of the queries generated.
+
+### Sort Queries
+
+In addition to expression queries that can be used in database `WHERE` clause. The library also supports parsing sort expressions which might show up in a database `ORDER BY` clause.
+
+```
+<?php
+
+use Krak\AQL;
+
+$engine = AQL\Engine::createSortWithDomain([
+    'categories' => ['sort', 'created_at']
+]);
+$query = 'categories.sort DESC, categories.created_at'; // defaults to ASCENDING.
+try {
+    $processed_query = $engine->process($query);
+} catch (AQL\AQLException $e) {
+    // any errors regarding data syntax or semantics will be caught here.
+}
+```
+
 
 ## Visitors
 
@@ -148,6 +169,10 @@ This would allow only the `now` and `date` functions to be used, anything else w
 
 ## Parser
 
+There are two interfaces into the AQLParser: ExpressionParser and SortParser.
+
+The ExpressionParser will assume a string input is an expression and parse accordingly. The SortParser will assume a string is a SortExpressionList and parse accordingly. Each Parser will return a root AST node of Expression or SortExpressionList accordingly.
+
 ### Operators
 
 From highest to lowest precedence
@@ -178,6 +203,11 @@ OR
     IdExpression  ::= identifier | identifier "." IdExpression
     Func          ::= identifier "(" ElementList ")"
     ElementList   ::= Element | Element "," ElementList
+
+    SortExpressionList ::= SortExpression | SortExpression "," SortExpressionList
+    SortExpression     ::= IdExpression "DESC"
+    SortExpression     ::= IdExpression "ASC"
+    SortExpression     ::= IdExpression
 
     string     = "[^"]\*"
     number     = (\d*\.\d+|\d+)

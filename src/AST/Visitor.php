@@ -13,4 +13,6 @@ interface Visitor
     public function visitValue(Value $node);
     public function visitValueList(ValueList $node);
     public function visitFunc(Func $node);
+    public function visitSortExpressionList(SortExpressionList $node);
+    public function visitSortExpression(SortExpression $node);
 }
